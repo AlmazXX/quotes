@@ -14,7 +14,7 @@ function App() {
         <Routes>
           <Route path="/"element={<Home/>} />
           <Route path="/quotes"element={<Home/>} />
-          <Route path="/quotes/:id"element={<Home/>} />
+          <Route path="/quotes/:category"element={<Home/>} />
           <Route path="/quotes/:id/edit"element={<Edit/>} />
           <Route path="/quotes/add"element={<Add/>} />
           <Route path="*"element={<div className="row mt-3"><h4>Not found!</h4></div>} />

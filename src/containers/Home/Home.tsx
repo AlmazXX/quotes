@@ -14,13 +14,13 @@ const CATEGORIES = {
 };
 
 const Home = () => {
-  const { id } = useParams();
+  const { category } = useParams();
   const [quotes, setQuotes] = useState<IQuote[]>([]);
 
-  const getQuotes = useCallback(async (id: string = "") => {
+  const getQuotes = useCallback(async (categoryParam: string = "") => {
     try {
       const quotesResponse = await axiosApi.get<IQuotesList>(
-        '/quotes.json?orderBy="category"&equalTo=' + (id && `"${id}"`)
+        '/quotes.json?orderBy="category"&equalTo=' + (categoryParam && `"${categoryParam}"`)
       );
       if (!quotesResponse.data) return setQuotes([]);
 
@@ -34,13 +34,13 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    void getQuotes(id);
-  }, [getQuotes, id]);
+    void getQuotes(category);
+  }, [getQuotes, category]);
 
   const deleteOneQuote = async (quoteId: string) => {
     try {
       await axiosApi.delete(`/quotes/${quoteId}.json`);
-      getQuotes(id);
+      getQuotes(category);
     } finally {
     }
   };
