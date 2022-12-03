@@ -1,12 +1,12 @@
-export interface Quote {
+export interface IQuote {
   id: string;
   author: string;
   category: string;
   text: string;
 }
 
-export type QuoteApi = Omit<Quote, 'id'>
+export type IQuoteApi = Omit<IQuote, 'id'>
 
-export interface QuotesList {
-  [id: string]: QuoteApi;
+export interface IQuotesList {
+  [id: string]: IQuoteApi;
 }
