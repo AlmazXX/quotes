@@ -1,16 +1,19 @@
 import { ChangeEvent, FC, FormEvent, useState } from "react";
-import { QuoteApi } from "../../types";
+import { IQuoteApi } from "../../types";
 
 interface Props {
-  onSubmit: (post: QuoteApi) => void;
+  existingQuote?: IQuoteApi;
+  onSubmit: (post: IQuoteApi) => void;
 }
 
-const QuoteForm: FC<Props> = ({ onSubmit }) => {
-  const [quote, setQuote] = useState<QuoteApi>({
-    category: "",
-    author: "",
-    text: "",
-  });
+const QuoteForm: FC<Props> = ({ existingQuote, onSubmit }) => {
+  const [quote, setQuote] = useState<IQuoteApi>(
+    existingQuote || {
+      category: "",
+      author: "",
+      text: "",
+    }
+  );
 
   const onQuoteChange = (
     event: ChangeEvent<
@@ -37,15 +40,16 @@ const QuoteForm: FC<Props> = ({ onSubmit }) => {
           className="form-control"
           value={quote.category}
           onChange={onQuoteChange}
+          required
         >
           <option disabled value="">
             Please select a value!
           </option>
-          <option value="Star Wars">Star Wars</option>
-          <option value="Famous people">Famous people</option>
-          <option value="Saying">Saying</option>
-          <option value="Humour">Humour</option>
-          <option value="Motivational">Motivational</option>
+          <option value="star_wars">Star Wars</option>
+          <option value="famous_people">Famous people</option>
+          <option value="saying">Saying</option>
+          <option value="humour">Humour</option>
+          <option value="motivational">Motivational</option>
         </select>
       </div>
       <div className="form-group mb-2">
@@ -70,7 +74,7 @@ const QuoteForm: FC<Props> = ({ onSubmit }) => {
         />
       </div>
       <button type="submit" className="btn btn-primary">
-        Submit
+        {existingQuote ? "Edit" : "Submit"}
       </button>
     </form>
   );
