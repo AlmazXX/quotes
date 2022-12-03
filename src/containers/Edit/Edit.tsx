@@ -2,31 +2,36 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosApi from "../../axiosApi";
 import QuoteForm from "../../components/QuoteForm/QuoteForm";
+import Spinner from "../../components/Spinner/Spinner";
 import { IQuoteApi } from "../../types";
 
 const Edit = () => {
-  const {id} = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
   const [quote, setQuote] = useState<IQuoteApi | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const getOneQuote = useCallback(async () => {
     try {
+      setLoading(true);
       const quoteResponse = await axiosApi.get(`quotes/${id}.json`);
       setQuote(quoteResponse.data);
-    } finally {}
-  }, [id])
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
 
   useEffect(() => {
     void getOneQuote();
-  }, [getOneQuote])
+  }, [getOneQuote]);
 
   const editQuote = async (quote: IQuoteApi) => {
     try {
-      // setLoading(true);
+      setLoading(true);
       await axiosApi.put(`/quotes/${id}.json`, quote);
       navigate("/");
     } finally {
-      // setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -34,7 +39,11 @@ const Edit = () => {
     <div className="row mt-3">
       <h4>Edit quote</h4>
       <div className="col-6">
-        {quote && <QuoteForm onSubmit={editQuote} existingQuote={quote}/>}
+        {loading ? (
+          <Spinner />
+        ) : (
+          quote && <QuoteForm onSubmit={editQuote} existingQuote={quote} />
+        )}
       </div>
     </div>
   );

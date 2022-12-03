@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import axiosApi from "../../axiosApi";
 import Menu from "../../components/Menu/Menu";
 import QuotesList from "../../components/Quotes/QuotesList";
+import Spinner from "../../components/Spinner/Spinner";
 import { IQuote, IQuotesList } from "../../types";
 
 const CATEGORIES = {
@@ -16,11 +17,14 @@ const CATEGORIES = {
 const Home = () => {
   const { category } = useParams();
   const [quotes, setQuotes] = useState<IQuote[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const getQuotes = useCallback(async (categoryParam: string = "") => {
     try {
+      setLoading(true);
       const quotesResponse = await axiosApi.get<IQuotesList>(
-        '/quotes.json?orderBy="category"&equalTo=' + (categoryParam && `"${categoryParam}"`)
+        '/quotes.json?orderBy="category"&equalTo=' +
+          (categoryParam && `"${categoryParam}"`)
       );
       if (!quotesResponse.data) return setQuotes([]);
 
@@ -30,6 +34,7 @@ const Home = () => {
       }));
       setQuotes(quotes);
     } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -39,9 +44,11 @@ const Home = () => {
 
   const deleteOneQuote = async (quoteId: string) => {
     try {
+      setLoading(true);
       await axiosApi.delete(`/quotes/${quoteId}.json`);
       getQuotes(category);
     } finally {
+      setLoading(false);
     }
   };
 
@@ -51,11 +58,15 @@ const Home = () => {
         <Menu categories={CATEGORIES} onClick={getQuotes} />
       </div>
       <div className="col-7">
-        <QuotesList
-          quotes={quotes}
-          categories={CATEGORIES}
-          onDelete={deleteOneQuote}
-        />
+        {loading ? (
+          <Spinner />
+        ) : (
+          <QuotesList
+            quotes={quotes}
+            categories={CATEGORIES}
+            onDelete={deleteOneQuote}
+          />
+        )}
       </div>
     </div>
   );
